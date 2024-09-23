@@ -45,12 +45,10 @@ En esta etapa del proyecto, estamos centrados en el procesamiento de datos, impl
         - db_config.py: Contiene la configuración de la base de datos MySQL, incluyendo las conexiones y parámetros de acceso.
         - models.py: Define los modelos de datos (tablas) para el sistema usando SQLAlchemy.
         - routes: Carpeta que contiene todos los Blueprints que manejan las diferentes rutas de la API.
-            - configuraciones.py: Maneja las configuraciones de cada dispositivo y usuario.
-            - datos_dispositivos.py: Gestiona los datos que los dispositivos IoT capturan (como niveles de glucosa).
+            - lectura.py: Maneja las lecturas captadas por cada dispositivo.
             - dispositivos.py: Gestión de dispositivos registrados en el sistema.
-            - proyectos.py: Maneja los diferentes proyectos IoT relacionados con el sistema.
             - seguridad.py: Implementa mecanismos de autenticación y autorización.
-            - usuarios.py: Gestiona la información de los usuarios registrados en el sistema.
+            - cliente.py: Gestiona la información de los usuarios registrados en el sistema.
         - requirements.txt: Lista de todas las dependencias del proyecto (incluyendo Flask y SQLAlchemy).
         - Dockerfile: Archivo que contiene las instrucciones para construir y desplegar la aplicación en un entorno Docker.
 - D presentacion
