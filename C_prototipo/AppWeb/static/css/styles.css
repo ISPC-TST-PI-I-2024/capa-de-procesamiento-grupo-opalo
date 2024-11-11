@@ -1,28 +1,38 @@
-/* styles.css */
+/* Plantilla de estilos en CSS  */
+/* Estilos de elementos generales de la pagina*/
 
+/* Reset */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* General */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f9ff;
     color: #333;
 }
 
 header {
-    background-color: #4CAF50;
+    background: url('https://www.shutterstock.com/shutterstock/photos/2049680768/display_1500/stock-photo-sugar-cubes-and-blue-circle-world-diabetes-day-copy-space-d-render-2049680768.jpg') center/cover no-repeat;
     color: white;
-    padding: 1em;
+    padding: 2em 1em;
     text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2em;
+    font-weight: bold;
+    
 }
 
 .tab-menu {
     display: flex;
     justify-content: center;
-    background-color: #333;
+    background-color: #4584d5f8;
 }
 
 .tab-menu li {
@@ -32,57 +42,107 @@ header {
 
 .tab-menu li a {
     color: white;
-    padding: 1em;
+    padding: 1em 1.5em;
     display: block;
+    font-size: 1.1em;
     text-decoration: none;
+    transition: background 0.3s;
 }
 
 .tab-menu li a:hover {
-    background-color: #4CAF50;
+    background-color: #0d47a1;
 }
 
 .section {
-    padding: 20px;
-    margin: 10px auto;
+    padding: 2em;
+    margin: 15px auto;
     width: 90%;
     max-width: 800px;
     background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
+.section h2, p  {
+    margin-bottom: 10px;
+}
+
+/* Contact Form */
 #contact-form label {
-    display: block;
-    margin: 10px 0 5px;
+    font-weight: bold;
+    margin: 12px 0 5px;
 }
 
 #contact-form input, #contact-form textarea, #contact-form button {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #d0d0d0;
     border-radius: 5px;
+    font-size: 1em;
 }
 
-#lecturas-list, #pacientes-list {
+#contact-form input:focus, #contact-form textarea:focus {
+    border-color: #1a73e8;
+    outline: none;
+}
+
+#contact-form button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+#contact-form button:hover {
+    background-color: #388e3c;
+}
+
+/* Patient List */
+#pacientes-list {
     list-style: none;
     padding: 0;
 }
 
 #pacientes-list li {
     cursor: pointer;
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #d1d9e6;
     border-radius: 5px;
-    transition: background-color 0.2s;
+    transition: background 0.2s, transform 0.2s;
+    background: #f9f9f9;
 }
 
 #pacientes-list li:hover {
-    background-color: #f9f9f9;
+    background-color: #e3f2fd;
+    transform: scale(1.02);
 }
 
-#paciente-detalles {
+/* Lecturas Section */
+#lecturas {
+    position: relative;
+}
+
+#searchPatient {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+#lecturas-list, #paciente-detalles {
+    margin-top: 1em;
+    font-size: 1.1em;
+}
+
+/* Gráficos */
+.chart-container {
+    width: 100%;
+    height: 300px;
     margin-top: 20px;
 }
 
@@ -93,7 +153,7 @@ header {
     }
 
     .tab-menu li a {
-        padding: 0.5em;
+        padding: 0.7em;
         text-align: center;
     }
 }

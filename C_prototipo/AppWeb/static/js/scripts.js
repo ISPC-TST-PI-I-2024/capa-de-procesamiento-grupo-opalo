@@ -8,20 +8,70 @@ document.querySelectorAll('.tab-menu a').forEach(anchor => {
     });
 });
 
-// Filtrar lecturas por nombre o DNI
+// Variable para almacenar la instancia del gráfico
+let chart;
+
+// Filtrar lecturas por nombre o DNI y actualizar el gráfico
 function filtrarLecturas() {
     const searchValue = document.getElementById('searchPatient').value.toLowerCase();
     const lecturasList = document.getElementById('lecturas-list');
-    
+    const ctx = document.getElementById('patientChart').getContext('2d');
+
     // Realizar petición al servidor para obtener lecturas filtradas
     fetch(`/api/mediciones?query=${searchValue}`)
         .then(response => response.json())
         .then(data => {
+            // Limpiar lista de lecturas
             lecturasList.innerHTML = '';
+
+            // Limpiar datos para el gráfico
+            const fechas = data.map(item => item.fecha);
+            const glucemia = data.map(item => item.glucemia);
+
+            // Mostrar cada lectura en la lista
             data.forEach(item => {
                 const li = document.createElement('li');
                 li.textContent = `Fecha: ${item.fecha}, Glucemia: ${item.glucemia} V`;
                 lecturasList.appendChild(li);
+            });
+
+            // Destruir el gráfico anterior si existe
+            if (chart) chart.destroy();
+
+            // Crear un nuevo gráfico con los datos actualizados
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Niveles de Glucemia',
+                        data: glucemia,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            display: true, 
+                            title: { display: true, text: 'Fecha' } 
+                        },
+                        y: { 
+                            display: true, 
+                            title: { display: true, text: 'Glucemia (mg/dL)' },
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
         })
         .catch(error => console.error('Error al filtrar lecturas:', error));

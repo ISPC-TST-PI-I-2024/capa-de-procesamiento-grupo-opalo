@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Monitoreo de Pacientes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Biblioteca de gráficos -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/js/sw.js')
+            .then(() => console.log('Service Worker registrado.'))
+            .catch(error => console.error('Error al registrar el Service Worker:', error));
+        }
+    </script>
+
+
 </head>
 <body>
 
@@ -21,9 +32,30 @@
     </ul>
 </nav>
 
+<section id="lecturas" class="section">
+    <h2>Lecturas de Pacientes</h2>
+    <input type="text" id="searchPatient" placeholder="Buscar por nombre o DNI" onkeyup="filtrarLecturas()">
+    <ul id="lecturas-list"></ul>
+    <div class="chart-container">
+        <canvas id="patientChart"></canvas>
+    </div>
+</section>
+
+<section id="pacientes" class="section">
+    <h2>Listado de Pacientes</h2>
+    <ul id="pacientes-list">
+        {% for paciente in pacientes %}
+        <li onclick="mostrarDetallesPaciente({{ paciente.paciente_id }})">
+            {{ paciente.nombre }} {{ paciente.apellido }}
+        </li>
+        {% endfor %}
+    </ul>
+    <div id="paciente-detalles"></div>
+</section>
+
 <section id="contacto" class="section">
-    <h2>Contacto de Emergencia</h2>
-    <p>Para consultas, comunícate al número: <strong>(123) 456-7890</strong> o al correo: <strong>contacto@proyectoip.com</strong></p>
+    <h2>Contacto</h2>
+    <p>Para consultas, comunícate al número: <strong>(351) 456-7890</strong> o al correo: <strong>opalo@proyectoip.com</strong></p>
     <form id="contact-form">
         <label for="name">Nombre:</label>
         <input type="text" id="name" name="name" required>
@@ -36,29 +68,6 @@
 
         <button type="submit">Enviar</button>
     </form>
-</section>
-
-<section id="lecturas" class="section">
-    <h2>Lecturas de Pacientes</h2>
-    <input type="text" id="searchPatient" placeholder="Buscar por nombre o DNI" onkeyup="filtrarLecturas()">
-    <ul id="lecturas-list">
-        <!-- Resultados de búsqueda se insertarán aquí -->
-    </ul>
-</section>
-
-<section id="pacientes" class="section">
-    <h2>Listado de Pacientes</h2>
-    <ul id="pacientes-list">
-        {% for paciente in pacientes %}
-        <li onclick="mostrarDetallesPaciente({{ paciente.paciente_id }})">
-            {{ paciente.nombre }} {{ paciente.apellido }}
-        </li>
-        {% endfor %}
-    </ul>
-    <div id="paciente-detalles">
-        <!-- Detalles del paciente se insertarán aquí al seleccionar -->
-    </div>
-
 </section>
 
 </body>
