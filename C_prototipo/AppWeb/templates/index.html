@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Monitoreo de Pacientes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Biblioteca de gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <script>
@@ -15,8 +15,6 @@
             .catch(error => console.error('Error al registrar el Service Worker:', error));
         }
     </script>
-
-
 </head>
 <body>
 
@@ -29,12 +27,19 @@
         <li><a href="#contacto">Contacto</a></li>
         <li><a href="#lecturas">Lecturas</a></li>
         <li><a href="#pacientes">Pacientes</a></li>
+        <li><a href="#nuevo-paciente">Agregar Paciente</a></li>
     </ul>
 </nav>
 
 <section id="lecturas" class="section">
     <h2>Lecturas de Pacientes</h2>
     <input type="text" id="searchPatient" placeholder="Buscar por nombre o DNI" onkeyup="filtrarLecturas()">
+    <label for="rango">Últimas mediciones en:</label>
+    <select id="rango" onchange="obtenerUltimasMediciones()">
+        <option value="24h">Últimas 24 horas</option>
+        <option value="7d">Últimos 7 días</option>
+        <option value="1w">Última semana</option>
+    </select>
     <ul id="lecturas-list"></ul>
     <div class="chart-container">
         <canvas id="patientChart"></canvas>
@@ -53,6 +58,43 @@
     <div id="paciente-detalles"></div>
 </section>
 
+<section id="nuevo-paciente" class="section">
+    <h2>Agregar Nuevo Paciente</h2>
+    <form id="add-patient-form" onsubmit="agregarPaciente(event)">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido" required>
+
+        <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+
+        <label for="sexo">Sexo:</label>
+        <select id="sexo" name="sexo" required>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+        </select>
+
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" name="direccion" required>
+
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso" name="peso" step="0.1" required>
+
+        <label for="altura">Altura (cm):</label>
+        <input type="number" id="altura" name="altura" step="0.1" required>
+
+        <label for="correo">Correo Electrónico:</label>
+        <input type="email" id="correo" name="correo" required>
+
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" required>
+
+        <button type="submit">Agregar Paciente</button>
+    </form>
+</section>
+
 <section id="contacto" class="section">
     <h2>Contacto</h2>
     <p>Para consultas, comunícate al número: <strong>(351) 456-7890</strong> o al correo: <strong>opalo@proyectoip.com</strong></p>
@@ -69,6 +111,88 @@
         <button type="submit">Enviar</button>
     </form>
 </section>
+
+<script>
+    // Función para obtener y mostrar las últimas mediciones
+    function obtenerUltimasMediciones() {
+        const rango = document.getElementById('rango').value;
+        fetch(`/api/mediciones/ultimas?rango=${rango}`)
+            .then(response => response.json())
+            .then(data => {
+                const listaLecturas = document.getElementById('lecturas-list');
+                listaLecturas.innerHTML = '';
+                data.forEach(lectura => {
+                    const item = document.createElement('li');
+                    item.textContent = `Paciente: ${lectura.nombre} ${lectura.apellido} - Glucemia: ${lectura.glucemia} mg/dl - Fecha: ${lectura.fecha}`;
+                    listaLecturas.appendChild(item);
+                });
+            })
+            .catch(error => console.error('Error al obtener las últimas mediciones:', error));
+    }
+
+    // Función para agregar un nuevo paciente
+    function agregarPaciente(event) {
+        event.preventDefault();
+        const formData = new FormData(document.getElementById('add-patient-form'));
+        const data = Object.fromEntries(formData);
+
+        fetch('/api/pacientes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => alert(result.message))
+        .catch(error => console.error('Error al agregar paciente:', error));
+    }
+
+    // Función para mostrar detalles de un paciente y confirmar eliminación
+    function mostrarDetallesPaciente(paciente_id) {
+        fetch(`/api/pacientes/${paciente_id}`)
+            .then(response => response.json())
+            .then(data => {
+                const detalles = document.getElementById('paciente-detalles');
+                detalles.innerHTML = `
+                    <h3>Detalles de ${data.nombre} ${data.apellido}</h3>
+                    <p>Fecha de nacimiento: ${data.fecha_nacimiento}</p>
+                    <p>Sexo: ${data.sexo}</p>
+                    <p>Dirección: ${data.direccion}</p>
+                    <p>Contacto: ${data.telefono}</p>
+                    <button onclick="confirmarEliminarPaciente(${paciente_id})">Eliminar Paciente</button>
+                `;
+            })
+            .catch(error => console.error('Error al obtener detalles del paciente:', error));
+    }
+
+    // Función para confirmar y eliminar un paciente
+    function confirmarEliminarPaciente(paciente_id) {
+        if (confirm('¿Está seguro que desea eliminar este paciente y todos sus datos asociados?')) {
+            fetch(`/api/pacientes/${paciente_id}?confirm=yes`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(result => alert(result.message))
+            .catch(error => console.error('Error al eliminar paciente:', error));
+        }
+    }
+
+    // Función para filtrar las lecturas de pacientes
+    function filtrarLecturas() {
+        const query = document.getElementById('searchPatient').value.toLowerCase();
+        fetch(`/api/mediciones?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const listaLecturas = document.getElementById('lecturas-list');
+                listaLecturas.innerHTML = '';
+                data.forEach(lectura => {
+                    const item = document.createElement('li');
+                    item.textContent = `Paciente: ${lectura.nombre} ${lectura.apellido} - Glucemia: ${lectura.glucemia} mg/dl - Fecha: ${lectura.fecha}`;
+                    listaLecturas.appendChild(item);
+                });
+            })
+            .catch(error => console.error('Error al filtrar lecturas:', error));
+    }
+</script>
 
 </body>
 </html>
