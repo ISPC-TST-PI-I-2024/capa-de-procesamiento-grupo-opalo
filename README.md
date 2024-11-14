@@ -65,7 +65,7 @@ El stack tecnológico utilizado en este proyecto incluye:
 - Plataforma de despliegue: Docker
 - Microcontrolador: ESP32 (para la conexión IoT)
 - Sensor: CNY 70 (para la captura de datos de glucosa)
-- Panel táctil: Para la interacción del usuario con el dispositivo
+- Panel táctil: Para la interacción del usuario con el dispositivo (opcional)
 - Plataforma en la nube: Conexion a un servidor brindado por el profesor. 
      - **comando:** ssh opalo@gonaiot.com **password** opalo
 
